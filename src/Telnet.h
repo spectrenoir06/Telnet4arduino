@@ -10,8 +10,9 @@
 #define SE    240
 
 #include "Arduino.h"
-#include "SPI.h"
 #include "Ethernet.h"
+#include "SPI.h"
+
 
 class Telnet {
   
@@ -34,7 +35,8 @@ private :
 
 public :
 
-  Telnet(IPAddress ip, uint16_t port = 23);
+  Telnet(IPAddress ip, uint16_t port, byte mac[]);
+  Telnet();
   char  receiveData();
   int   available();
   void  sendData(char c);

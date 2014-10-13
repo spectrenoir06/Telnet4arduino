@@ -45,26 +45,36 @@ bool  option[] = {  // It's all the telnet option true if arduino accepte the op
 };
 
 
-Telnet::Telnet(IPAddress ip, uint16_t port){
-  
+Telnet::Telnet(IPAddress ip, uint16_t port, byte mac[]){
   byte statut;
+  Serial.println("init ethernet");
+  Ethernet.begin(mac);
+  delay(500);
   Serial.println("connecting...");
   statut = client.connect(ip, port);
   if (statut == 1)
     Serial.println("connected");
   else
-    Serial.println("connection failed");
+    Serial.println("failed");
     
     
 }
 
+Telnet::Telnet(){
+
+};
+
 char  Telnet::receiveData() {
-  byte data = client.read();    // read byte from server
-  if (data == IAC)              // if start of a commande
-    command();
-  else                          // if juste a printable caractere
-    return data;                // return char
-  return (0);
+	if (client.available()){
+	  byte data = client.read();    // read byte from server
+	  Serial.print(data,HEX);
+	  Serial.print(" ");
+	  /*if (data == IAC)              // if start of a commande
+		command();
+	  else                          // if juste a printable caractere
+		return data;                // return char
+	  */}
+	//return (0);
 }
 
 int  Telnet::available(){
@@ -103,9 +113,53 @@ void  Telnet::cmdDo(){
      sendWont(data);          // else send wont
 }
 
+void  Telnet::cmdDont(){
+  byte data = client.read();    // read the third byte
+  Serial.print("Dont ");
+  Serial.println(data, DEC);
+  if (!option[data])            // if the option is permitted send Will
+     sendWill(data);
+   else
+     sendWont(data);          // else send wont
+}
+
+void  Telnet::cmdWill(){
+  byte data = client.read();    // read the third byte
+  Serial.print("Will ");
+  Serial.println(data, DEC);
+}
+
+void  Telnet::cmdWont(){
+  byte data = client.read();    // read the third byte
+  Serial.print("Wont ");
+  Serial.println(data, DEC);
+}
+
+void  Telnet::cmdSb(){
+  byte data1 = client.read();    // read the third byte
+  byte data2 = 0;
+  Serial.print("Sb ");
+  Serial.print(data1, DEC);
+  Serial.print(" ");
+  while ((data1 != IAC) && (data2 != SE)){
+	data2 = data1;
+	data1 = client.read();
+	Serial.print(data1);
+  }
+  Serial.println(" IAC SE");
+}
+
+
 void  Telnet::sendWill(byte option){
   byte data[] = {IAC, WILL, option};
   Serial.print("s: IAC WILL ");
+  Serial.println(option, DEC);
+  client.write(data,3);
+}
+
+void  Telnet::sendWont(byte option){
+  byte data[] = {IAC, WONT, option};
+  Serial.print("s: IAC WONT ");
   Serial.println(option, DEC);
   client.write(data,3);
 }
