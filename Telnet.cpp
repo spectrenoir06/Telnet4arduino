@@ -1,49 +1,51 @@
 
-bool  option[] = {
+#include "Telnet.h"
+
+bool  option[] = {  // It's all the telnet option true if arduino accepte the option else false
     false,  // 0  Binary Transmission
-    true,   // 1  Echo
-    true,   // 2  Reconnnection
+    false,  // 1  Echo
+    false,  // 2  Reconnnection
     true,   // 3  Suppress Go Ahead
-    true,   // 4  Approx Message Size Negotiation
+    false,  // 4  Approx Message Size Negotiation
     true,   // 5  Status
-    true,   // 6  Timing Mark
-    true,   // 7  Remote Controlled Trans and Echo
-    true,   // 8  Output Line Width
-    true,   // 9  Output Page Size
-    true,   // 10 Output Carriage-Return Disposition
-    true,   // 11 Output Horizontal Tabstops
-    true,   // 12 Output Horizontal Tab Disposition
-    true,   // 13 Output Formfeed Disposition
-    true,   // 14 Output Vertical Tabstops
+    false,  // 6  Timing Mark
+    false,  // 7  Remote Controlled Trans and Echo
+    false,  // 8  Output Line Width
+    false,  // 9  Output Page Size
+    false,  // 10 Output Carriage-Return Disposition
+    false,  // 11 Output Horizontal Tabstops
+    false,  // 12 Output Horizontal Tab Disposition
+    false,  // 13 Output Formfeed Disposition
+    false,  // 14 Output Vertical Tabstops
     true,   // 15 Output Vertical Tab Disposition
-    true,   // 16 Output Linefeed Disposition
-    true,   // 17 Extended ASCII
-    true,   // 18 Logout
-    true,   // 19 Byte Macro
-    true,   // 20 Data Entry Terminal
-    true,   // 21 SUPDUP
-    true,   // 22 SUPDUP Output
-    true,   // 23 Send Location
+    false,  // 16 Output Linefeed Disposition
+    false,  // 17 Extended ASCII
+    false,  // 18 Logout
+    false,  // 19 Byte Macro
+    false,  // 20 Data Entry Terminal
+    false,  // 21 SUPDUP
+    false,  // 22 SUPDUP Output
+    false,  // 23 Send Location
     true,   // 24 Terminal Type
-    true,   // 25 End of Record
-    true,   // 26 TACACS User Identiﬁcation
-    true,   // 27 Output Marking
-    true,   // 28 Terminal Location Number
-    true,   // 29 TELNET 3270 Regime
-    true,   // 30 X3 PAD
+    false,  // 25 End of Record
+    false,  // 26 TACACS User Identiﬁcation
+    false,  // 27 Output Marking
+    false,  // 28 Terminal Location Number
+    false,  // 29 TELNET 3270 Regime
+    false,  // 30 X3 PAD
     true,   // 31 Negotiate About Window Size
-    true,   // 32 Terminal Speed
+    false,  // 32 Terminal Speed
     true,   // 33 Remote Flow Control
-    true,   // 34 Linemode
-    true,   // 35 X Display Location
-    true,   // 36
-    true,   // 37 TELNET Authentication Option
-    true,   // 38
-    true    // 39 TELNET Environment Option 
-}
+    false,  // 34 Linemode
+    false,  // 35 X Display Location
+    false,  // 36
+    false,  // 37 TELNET Authentication Option
+    false,  // 38
+    false,  // 39 TELNET Environment Option 
+};
 
 
-Telnet::Telnet(IPAddress ip, uint16 port = 23){
+Telnet::Telnet(IPAddress ip, uint16_t port){
   
   byte statut;
   Serial.println("connecting...");
@@ -52,15 +54,16 @@ Telnet::Telnet(IPAddress ip, uint16 port = 23){
     Serial.println("connected");
   else
     Serial.println("connection failed");
+    
+    
 }
 
-char  Telnet::get() {
-  byte data;
-  data = client.read();
-  if (data == IAC);
+char  Telnet::receiveData() {
+  byte data = client.read();    // read byte from server
+  if (data == IAC)              // if start of a commande
     command();
-  else
-    return data;
+  else                          // if juste a printable caractere
+    return data;                // return char
   return (0);
 }
 
@@ -69,9 +72,9 @@ int  Telnet::available(){
 }
 
 void  Telnet::command(){
-  byte data = client.read();
+  byte data = client.read();  // read second byte from the commande
   Serial.print("r: IAC ");
-  switch (data) {
+  switch (data) {             // swith with the 4 cmd possible 
     case(DO) :
       cmdDo();
       break;
@@ -91,19 +94,18 @@ void  Telnet::command(){
 }
 
 void  Telnet::cmdDo(){
-  byte data = client.read();
+  byte data = client.read();    // read the third byte
   Serial.print("Do ");
   Serial.println(data, DEC);
-  if (option[data])
+  if (option[data])            // if the option is permitted send Will
      sendWill(data);
    else
-     sendWont(data);
+     sendWont(data);          // else send wont
 }
 
-void  Telnet:sendWill(byte cmd){
-  byte data[] = {IAC, WILL, 0}
-  data[2] = cmd;
+void  Telnet::sendWill(byte option){
+  byte data[] = {IAC, WILL, option};
   Serial.print("s: IAC WILL ");
-  Serial.println(cmd,DEC);
-  client.write(data,3);  
+  Serial.println(option, DEC);
+  client.write(data,3);
 }

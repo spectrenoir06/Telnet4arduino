@@ -33,8 +33,9 @@ private :
 
 public :
 
-  Telnet(IPAddress ip, uint16 port = 23);
+  Telnet(IPAddress ip, uint16_t port = 23);
   char  receiveData();
+  int   available();
   void  sendData(char c);
   void  sendData(byte *tab, int len);
 };
