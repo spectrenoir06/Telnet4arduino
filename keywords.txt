@@ -1,0 +1,26 @@
+#######################################
+# Syntax Coloring Map For Telnet
+#######################################
+
+#######################################
+# Datatypes (KEYWORD1)
+#######################################
+
+TelnetClient	KEYWORD1
+
+#######################################
+# Methods and Functions (KEYWORD2)
+#######################################
+
+sendDo	KEYWORD2
+
+#######################################
+# Constants (LITERAL1)
+#######################################
+
+IAC	LITERAL1
+DO	LITERAL1
+DONT	LITERAL1
+WILL	LITERAL1
+WONT	LITERAL1
+SB	LITERAL1

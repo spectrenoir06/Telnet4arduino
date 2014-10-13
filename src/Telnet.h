@@ -9,8 +9,9 @@
 #define SB    250
 #define SE    240
 
-#include <Arduino.h>
-#include <Ethernet.h>
+#include "Arduino.h"
+#include "SPI.h"
+#include "Ethernet.h"
 
 class Telnet {
   
