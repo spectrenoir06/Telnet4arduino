@@ -41,7 +41,7 @@ bool  option[] = {  // It's all the telnet option true if arduino accepte the op
     false,  // 36
     false,  // 37 TELNET Authentication Option
     false,  // 38
-    false,  // 39 TELNET Environment Option 
+    false,  // 39 TELNET Environment Option
 };
 
 
@@ -56,8 +56,8 @@ Telnet::Telnet(IPAddress ip, uint16_t port, byte mac[]){
     Serial.println("connected");
   else
     Serial.println("failed");
-    
-    
+
+
 }
 
 Telnet::Telnet(){
@@ -78,13 +78,13 @@ char  Telnet::receiveData() {
 }
 
 int  Telnet::available(){
-  return (client.available());  
+  return (client.available());
 }
 
 void  Telnet::command(){
   byte data = client.read();  // read second byte from the commande
   Serial.print("r: IAC ");
-  switch (data) {             // swith with the 4 cmd possible 
+  switch (data) {             // swith with the 4 cmd possible
     case(DO) :
       cmdDo();
       break;
@@ -96,7 +96,7 @@ void  Telnet::command(){
       break;
     case(WONT) :
       cmdWont();
-      break;  
+      break;
     case(SB) :
       cmdSb();
       break;
